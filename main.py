@@ -12,6 +12,7 @@ cur = conn.cursor()
 
 global version
 version = "2.0 ALPHA"
+DEINE_USER_ID = "HIER DEINE USER ID"
 
 global gamestatus
 # gamestatus = "!help @Logit | TheBotDev"
@@ -38,15 +39,13 @@ class MyClient(discord.Client):
         cur.execute(
             "CREATE TABLE IF NOT EXISTS support (channel INTEGER, messageUser TEXT, message TEXT, server INTEGER)")
         cur.execute("CREATE TABLE IF NOT EXISTS webhook (server INTEGER, url TEXT)")
-        # cur.execute("CREATE TABLE IF NOT EXISTS levels (gid INTEGER, lvl10 INTEGER, lvl5 INTEGER, lvl10 INTEGER, lvl15 INTEGER, lvl20 INTEGER, lvl25 INTEGER, lvl30, lvl50 INTEGER, lvl100 INTEGER)")
-        # cur.execute("CREATE TABLE IF NOT EXISTS level_user (gid INTEGER, aktlvl INTEGER, aktxp INTEGER)")
 
-        print("Erfolgreich eingeloggt!\n")
+        print("Login succesfully!\n")
         print("""================\n""")
-	# Get emojis for the Setup and for the games
+	#Emojis für die Setup's der Game's (wenn du auch diese Emojis haben möchtest schreibe mir und ich mache das dann für dich)
         emojilist = client.get_guild(394139572260438020)
         emojilist2 = client.get_guild(398121407847989248)
-        basechip = client.get_user(333220752117596160)
+        admin_name = client.get_user(DEINE_USER_ID)
         counter = 0
         counter2 = 0
         for emojis in emojilist2.emojis:
@@ -173,7 +172,6 @@ class MyClient(discord.Client):
         cur.execute("SELECT status FROM premium WHERE serverid=?", (message.guild.id,))
         global statuspremium
         statuspremium = cur.fetchall()
-        # Generell STAFF
         if message.content.startswith(prefix):
             invoke = message.content[inleng:].split(" ")[0]
             if invoke == "ping":
@@ -203,6 +201,7 @@ class MyClient(discord.Client):
                         except discord.errors.Forbidden:
                             await message.channel.send(
                                 content="Das Setup wurde abgebrochen! Leider habe ich nicht die Permission um einen WebHook zu erstellen (WebHooks verwalten), aber das ist sehr wichtig für diese Funktion!")
+
             if invoke == "replace":
                 def c(m):
                     if m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -222,10 +221,7 @@ class MyClient(discord.Client):
                 message10 = message9
                 await message.channel.send(content=message10)
 
-            # ___ ___ ___ __  __ ___ _   _ __  __ 
-            # | _ \ _ \ __|  \/  |_ _| | | |  \/  |
-            # |  _/   / _|| |\/| || || |_| | |\/| |
-            # |_| |_|_\___|_|  |_|___|\___/|_|  |_|
+
 
             if invoke == "activate" or invoke == "premiumactivate" or invoke == "activatepremium" or invoke == "activatePremium" or invoke == "pa" or invoke == "ap":
                 if message.author.guild_permissions.administrator == True or message.author.id == DEINE_USER_ID:
@@ -255,7 +251,7 @@ class MyClient(discord.Client):
                                             "INSERT INTO premium (key, serverid, servername, status) VALUES(?, ?, ?, ?)",
                                             (int(key), message.guild.id, message.author.guild.name, "activated"))
 
-                                        conn.commit()
+                                         conn.commit()
                                         await message.channel.send(
                                             content="Sehr Gut Premium wurde erfolgreich für diesen Server aktiviert :tada:, wenn du irgendwelche Vorschläge oder so hast kontaktiere mich bitte. Dann noch viel Spaß mit dem Bot.")
                                     else:
@@ -294,7 +290,7 @@ class MyClient(discord.Client):
                         url="https://thebotdev.de/assets/img/alert.png"))
                     await asyncio.sleep(20)
                     await sorry.delete()
-            if invoke == "premium":
+           if invoke == "premium":
                 cur.execute("SELECT status FROM premium WHERE serverid=?", (message.guild.id,))
                 stat = cur.fetchall()
                 status = "error to read database"
@@ -306,34 +302,31 @@ class MyClient(discord.Client):
                 embed.set_author(name="Premium Dashboard")
                 embed.add_field(name="status:", value=status, inline=False)
                 embed.add_field(name="Info:",
-                                value="You can see from the fact that this icon %s is before a setting, that it only works when you own Premium. To buy Premium please enter **!buypremium**" % (
+                                value="Du kannst sehen das wenn das Icon: %s vor einer Einstellung ist dass es dann nur Premium Nutzer benutzen können. Um Premium zu kaufen gebe bitte **!buypremium** ein" % (
                                     str(premium)), inline=False)
-                embed.add_field(name="Why premium?",
-                                value="I sell premium for my bots not because I want to deduct money from someone, but because I have certain expenses for my bots and I try to get this money back by selling the premium rank (1$ for one server | 3$ for infinite number of servers)",
+                embed.add_field(name="Wieso Premium?",
+                                value="Ich verkaufe Premium für meine Bots nicht um Geld abzu ziehen sondern weil ich auch Ausgaben für meine Bots habe und ich mit Premium und co. probiere diese Ausgaben wieder zurück zu bekommen indem ich den Premium Rang verkaufe (1 $ für einen Server | 3 $ für unendlich Server)",
                                 inline=False)
-                embed.add_field(name="What do i get if i buy premium?",
-                                value="If you buy premium, you get access to more features from this bot and the premium role on my server with it you can access more channels on this server.")
+                embed.add_field(name="Was bekomme ich wenn ich Premium kaufe?",
+                                value="Wenn du Premium kaufst dann bekommst du die Premium Rolle auf meinem Server mit der du mehr Channel sehen kannst und exklusiven Zugriff auf Premium Funktionen des Bot's.")
                 await message.channel.send(embed=embed)
 
             if invoke == "buypremium":
                 embed = discord.Embed(color=0x64efff)
-                embed.set_author(name="Buy Premium <3", url="https://patreon.com/TheBotDev")
-                embed.add_field(name="How do i buy premium?",
-                                value="To get the Premium Rank you need to be on TheBotDev Support Server, where you will receive a private message with your product key as soon as you buy the Premium Rank for one (1$) or for an infinite number of servers (3$), which you can then activate with %sactivatePremium on your server." % (
+                embed.set_author(name="Premium kaufen <3", url="https://patreon.com/TheBotDev")
+                embed.add_field(name="Wie kaufe ich Premium?",
+                                value="Um den Premium Rang zu bekommen musst du auf dem TheBotDev Server sein dann wirst du eine Private Nachricht meines Bot's erhalten in der dein Key steht. Diesen Key kannst du mit dem Befehl %sactivatePremium auf deinem Server einlösen." % (
                                     prefix))
-                embed.add_field(name="Where could i buy Premium?",
-                                value="You could buy premium for this bot on [Patreon](https://patreon.com/TheBotDev), but you have to be on [TheBotDev Support Server](https://discord.gg/HD7x2vx)")
-                embed.add_field(name="How do i activate Premium?",
-                                value="After you have bought the premium rank on Patreon you get a private message from my bot which sends you a 16 digits long code, which them you can activate your server with the %sactivatePremium command" % (
+                embed.add_field(name="Wo könnte ich Premium kaufen?",
+                                value="Premium für diesen Bot kaufst du auf [Patreon](https://patreon.com/TheBotDev), aber du musst auf dem [TheBotDev Support Server](https://discord.gg/HD7x2vx) sein.")
+                embed.add_field(name="Wie aktiviere ich Premium?",
+                                value="Nachdem dir Patreon die Premium Rolle gegeben hat wird dir mein Bot eine Nachricht mit einem 16 stelligen Key senden. Diesen Key lößt du mit dem  %sactivatePremium Command auf deinem Server ein." % (
                                     str(prefix)))
                 await message.channel.send(embed=embed)
 
-            # ___   _   __  __ ___ ___ 
-            # / __| /_\ |  \/  | __/ __|
-            # | (_ |/ _ \| |\/| | _|\__ \
-            # \___/_/ \_\_|  |_|___|___/
 
-            # Iam sorry, but i dont publish all the games from my Bot, because i sell them on patreon
+
+            # Es tut mir leid das ich leider nicht alle Games veröffentlicht habe weil ich sie auf Patreon anbiete.
 
             if invoke == "acc":
                 ban = "unknown"
@@ -345,7 +338,7 @@ class MyClient(discord.Client):
                                 (message.author.id, 2500, 0, message.guild.id))
                     conn.commit()
                     await message.channel.send(
-                        content="Your account has been successfully created! For more infos please enter %sacc or type in %sgames to get a list with all games" % (
+                        content="Dein Account wurde erfolgreich erstellt! Für weitere Informationen gebe bitte %sacc oder %sgames um eine Liste mit allen Games zu bekommen" % (
                         prefix, prefix))
                 else:
                     cur.execute("SELECT money FROM server_game_accounts WHERE userid=? AND serverid=?",
@@ -361,9 +354,9 @@ class MyClient(discord.Client):
                         if userban == 1:
                             ban = "banned for games by the server admin"
                         elif userban == 0:
-                            ban = "Your not banned for games"
+                            ban = "Du bist nicht für Games gebannt"
                     else:
-                        ban = "Your not banned for games"
+                        ban = "Du bist nicht für Games gebannt"
                     embed = discord.Embed(color=0x64efff)
                     embed.set_author(name="Account")
                     embed.add_field(name="money:", value=str(money) + str(moneyicon), inline=True)
@@ -376,7 +369,7 @@ class MyClient(discord.Client):
                 channel = cur.fetchone()[0]
                 if channel == message.channel.id:
                     abfrage = await message.channel.send(
-                        content=":one: 1-10 costs: 10%s win: 100%s\n:two: 1-20 costs: 10%s win: 200%s\n:three: 1-30 costs: 10%s win: 3000%s\n:four: 1-40 costs: 10%s win: 4000%s\n:five: 1-50 costs: 10%s win: 5555%s" % (
+                        content=":one: 1-10 kosten: 10%s win: 100%s\n:two: 1-20 kosten: 10%s win: 200%s\n:three: 1-30 kosten: 10%s win: 3000%s\n:four: 1-40 kosten: 10%s win: 4000%s\n:five: 1-50 kosten: 10%s win: 5555%s" % (
                         str(moneyicon), str(moneyicon), str(moneyicon), str(moneyicon), str(moneyicon), str(moneyicon),
                         str(moneyicon), str(moneyicon), str(moneyicon), str(moneyicon)))
                     try:
@@ -387,10 +380,10 @@ class MyClient(discord.Client):
                         await abfrage.add_reaction(n5)
                     except discord.errors.Forbidden:
                         await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                                       description="Error! Couldnt start the game! I do not have the permissions for adding reactions"))
+                                                                       description="Ich konnte das Game leider nicht starten! Bitte gebe mir die Berrechtigung Reactions hinzu zufügen"))
                 else:
                     information = await message.channel.send(
-                        content="This is not a game channel or games are not allowed on this server, if you are the admin and want to set it up type in !setupG")
+                        content="Dies ist kein Game Channel oder Game's sind auf diesem Server nicht erlaubt, wenn du der Admin bist du es eintichten möchtest mache bitte !setupG")
                     await asyncio.sleep(20)
                     await information.delete()
 
@@ -398,18 +391,18 @@ class MyClient(discord.Client):
             # PREFIX
             elif invoke == "PREFIX":
                 chapre = prefix + "pchange"
-                hel = prefix + "help"
+                hel = prefix + "Hilfe"
                 embed = discord.Embed(color=0x64efff)
                 embed.set_author(name="Prefix")
-                embed.add_field(name="current Prefix:", value=prefix, inline=False)
-                embed.add_field(name="change Prefix:", value=chapre, inline=False)
-                embed.add_field(name="more help:", value=hel, inline=True)
+                embed.add_field(name="aktueller Prefix:", value=prefix, inline=False)
+                embed.add_field(name="ändere Prefix:", value=chapre, inline=False)
+                embed.add_field(name="mehr Hilfe:", value=hel, inline=True)
                 await message.channel.send(embed=embed)
             elif invoke == "pchange":
-                if message.author.guild_permissions.administrator == True or message.author.id == 333220752117596160:
+                if message.author.guild_permissions.administrator == True or message.author.id == DEINE_USER_ID:
                     gid = message.guild.id
                     await message.channel.send(embed=discord.Embed(color=0x64efff,
-                                                                   description="Your current prefix is %s Now just send me the new prefix" % prefix))
+                                                                   description="Dein aktueller Prefix ist %s Nun sende mir bitte den neuen Prefix" % prefix))
 
                     def c(m):
                         if m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -419,90 +412,83 @@ class MyClient(discord.Client):
                     newprefix = waitfor.content
                     cur.execute("UPDATE server_settings SET prefix=? WHERE gid=?", (newprefix, gid))
                     conn.commit()
-                    await message.channel.send(content="Successful new prefix is " + str(newprefix))
+                    await message.channel.send(content="Der neue prefix ist nun " + str(newprefix))
                 else:
                     await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                                   description="This command can only use administrators, sorry").set_thumbnail(
-                        url="https://thebotdev.de/assets/img/alert.png"))
+                                                                   description="Diese Command ist nur für Administratoren Sorry!").set_thumbnail(url="https://thebotdev.de/assets/img/alert.png"))
             elif invoke == "changelog":
                 await message.channel.send(content=msgChangeLog)
             elif invoke == "info":
                 embed = discord.Embed(color=0x64efff)
                 embed.set_author(name="Botinfo",
                                  icon_url="https://thebotdev.de/assets/img/Fragezeichen.png")
-                embed.add_field(name="Bot by:", value="BaseChip#2390", inline=False)
-                embed.add_field(name="Project:", value="TheBotDev", inline=False)
-                embed.add_field(name="Invite me to your server:",
+                embed.add_field(name="Bot von:", value="BaseChip#2390", inline=False)
+                embed.add_field(name="Projekt:", value="TheBotDev", inline=False)
+                embed.add_field(name="Lade mich auf deinen Server ein:",
                                 value="[invite](https://discordapp.com/oauth2/authorize?client_id=398933329862328330&permissions=1342663878&scope=bot)",
                                 inline=False)
-                embed.add_field(name="My Support Server:", value="https://discord.gg/HD7x2vx", inline=False)
-                embed.add_field(name="Bot Lists:",
-                                value="[DiscordBots](https://discordbots.org/bot/398933329862328330)", inline=False)
+                embed.add_field(name="Mein Support Server:", value="https://discord.gg/HD7x2vx", inline=False)
+                embed.add_field(name="Bot Liste:", value="[DiscordBots](https://discordbots.org/bot/398933329862328330)", inline=False)
                 embed.add_field(name="Version:", value=version, inline=False)
-				embed.add_field(name="GitHub", value="[This is a fork from GitHub](https://github.com/BaseChip)", inline=False)
+		embed.add_field(name="GitHub", value="[BaseChip](https://github.com/BaseChip)", inline=False)
                 embed.add_field(name="Libary", value="discord.py rewrite api", inline=False)
-                # embed.add_field(name="", value="")
-                embed.set_footer(text="Thanks for using!")
+                embed.set_footer(text="Vielen Dank für die Benutzung!")
                 await message.channel.send(embed=embed)
 
             elif invoke == "replaceinfo":
                 embed = discord.Embed(color=0x64efff)
                 embed.set_author(name="Replace Info",
                                  icon_url="https://thebotdev.de/assets/img/Fragezeichen.png")
-                embed.add_field(name="Available Emojis",
+                embed.add_field(name="Ferfügbare Emojis",
                                 value=" n11 -> %s\nn12 -> %s\nn13 -> %s\nn14 -> %s\nn15 -> %s\nn16 -> %s\nn17 -> %s\nn18 -> %s\nn19 -> %s" % (
                                 str(z11), str(z12), str(z13), str(z14), str(z15), str(z16), str(z17), str(z18),
                                 str(z19)))
                 await message.channel.send(embed=embed)
 
             elif invoke == "rules" and message.channel.id != 404911854112997377:
-                embed = discord.Embed(title="Rules ",
-                                      description="A function to create rules is not built into this bot, but here are two bots which can create rules for you",
+                embed = discord.Embed(title="Regeln ",
+                                      description="Eine Funktion um Regeln zu aktzeptieren ist der Rules Bot und dann gibt es da auch noch so nen komisch Blitz Bot",
                                       color=0x00ff00)
-                embed.add_field(name="Rules Bot (from me)", value="https://discord.gg/HD7x2vx", inline=False)
-                embed.add_field(name="Flash", value="https://flashbot.de", inline=True)
+                embed.add_field(name="Rules Bot (von mir)", value="https://discord.gg/HD7x2vx", inline=False)
+                embed.add_field(name="Flash aka. Blitz", value="https://flashbot.de", inline=True)
                 await message.channel.send(embed=embed)
 
             elif invoke == "help" or invoke == "Help" or invoke == "Support" or invoke == "Hilfe":
                 embed = discord.Embed(color=0x64efff)
-                embed.set_author(name="Help", icon_url="https://thebotdev.de/assets/img/Fragezeichen.png")
+                embed.set_author(name="Hilfe", icon_url="https://thebotdev.de/assets/img/Fragezeichen.png")
                 embed.add_field(name="Prefix",
-                                value="➥" + prefix + "**PREFIX** -> shows the informations about this command\n➥" + prefix + "**pchange** -> change the bots prefix",
+                                value="➥" + prefix + "**PREFIX** -> zeigt Informationen über diesen Command\n➥" + prefix + "**pchange** -> ändert den Prefix (serverweit)",
                                 inline=False)
                 embed.add_field(name="Logs",
-                                value="➥" + prefix + "**log** -> shows information abaout Logs on your server\n➥" + prefix + "**setupL** -> Setup the servers logs",
+                                value="➥" + prefix + "**log** -> zeigt Informationen übern den Log auf deinem Server\n➥" + prefix + "**setupL** -> Ist das Setup für den Server Log",
                                 inline=False)
-                embed.add_field(name="Admin Staff",
-                                value="➥" + prefix + "**ban** -> Ban a user\n➥" + prefix + "**kick** -> Kick a user\n➥" + prefix + "**ping** -> Shows that the Bot is online",
+                embed.add_field(name="Admin Commands",
+                                value="➥" + prefix + "**ban** -> Bannt einen User\n➥" + prefix + "**kick** -> Kickt einen User\n➥" + prefix + "**ping** -> Zeigt ob der Bot online ist.",
                                 inline=False)
                 embed.add_field(name="Messages",
-                                value="➥" + prefix + "**send** [The Message] -> sends your message\n" + "➥" + prefix + "**message** -> Creates messages with a colored Border\n➥" + prefix + "**replaceinfo** -> Infos to the replace command\n➥" + prefix + "**replace** -> Replace to some usefull emojis")
+                                value="➥" + prefix + "**send** [Die Nachricht] -> sendet eine Nacheicht\n" + "➥" + prefix + "**message** -> Generiert eine Nachricht mit einem bunten Rand\n➥" + prefix + "**replaceinfo** -> Infos für den 'replace' Command\n➥" + prefix + "**replace** -> Ersetzt nutzvolle Emojis.")
                 embed.add_field(name="Games",
                                 value="➥%ssetupG\n➥%sgames\n➥%snumber\n➥%s%sdon\n➥%s%srace\n➥%s%saddmoney\n➥%s%sremovemoney" % (
                                 prefix, prefix, prefix, str(premium), prefix, str(premium), prefix, str(premium),
                                 prefix, str(premium), prefix), inline=False)
-                embed.add_field(name="General things",
-                                value="➥%s**info**\n➥%s**send** [the message]\n➥%s**rules**" % (prefix, prefix, prefix),
+                embed.add_field(name="Normale Sachen",
+                                value="➥%s**info**\n➥%s**send** [Die nacheicht]\n➥%s**rules**" % (prefix, prefix, prefix),
                                 inline=False)
                 embed.add_field(name="Premium",
                                 value="➥%s**ap**\n➥%s**premium**\n➥%s**buypremium**" % (prefix, prefix, prefix))
                 await message.channel.send(embed=embed)
-
-            # Level
-            # elif invoke=="LevelSetup" or invoke=="Levelsetup" or invoke=="levelsetup":
-            #	await message.channel.send(embed=discord.Embed(color=discord.Color.green(), description="The setup for creating a levelbot is started. I could give the users a role when they reach the levels 10,15,20,25,30,50,100, now please click the numbers below to set up the role the user should get if he reach this level"))
-
+		
             # Admin stuff
             elif invoke == "leave":
-                if message.author.id == 333220752117596160 and message.author.name == "BaseChip":
+                if message.author.id == DEINE_USER_ID:
                     await message.guild.leave()
 
                 else:
                     await message.channel.send(
-                        content="WOW an hidden feature, but this feature could only use BaseChip - sorry")
+                        content="WOW eine geheime Funktion aber es tut mir Leid diese Funktion ist nur für BaseChip :shrug:")
             elif invoke == "ban":
-                if message.author.guild_permissions.administrator == True or message.author.id == 333220752117596160:
-                    await message.channel.send(content="Please mention now the User i should ban")
+                if message.author.guild_permissions.administrator == True or message.author.id == DEINE_USER_ID:
+                    await message.channel.send(content="Bitte mentione den User den ich bannen soll")
 
                     def c(m):
                         if m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -510,25 +496,25 @@ class MyClient(discord.Client):
 
                     usr = await client.wait_for("message", check=c, timeout=None)
                     usertoban = usr.mentions[0]
-                    await message.channel.send(content="If I should ban " + str(
-                        usertoban.mention) + " then please send me now the reason and otherwise please send `n`")
+                    await message.channel.send(content="Ich werde den User " + str(
+                        usertoban.mention) + "bannen. Bitte sende mir nun den ban Grund oder wenn du keinen grund angeben möchtest antworte mit `n`")
                     reas = await client.wait_for("message", check=c, timeout=None)
                     if reas.content != "n":
                         try:
                             await message.author.guild.ban(usertoban,
-                                                           reason=reas.content + "  | Banned by: " + reas.author.name,
+                                                           reason=reas.content + "  | Wurde gebannt von: " + reas.author.name,
                                                            delete_message_days=7)
                         except discord.errors.Forbidden:
                             await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                                           description="Error i dont have the permissions to ban"))
+                                                                           description="Error ich habe keine Rechte zum bannen!"))
                 else:
-                    sorry = await message.channel.send(content="sorry this command can only use admins")
+                    sorry = await message.channel.send(content="Sorry diesen Command können nur Admins benutzen")
                     await asyncio.sleep(20)
                     await sorry.delete()
 
             elif invoke == "kick":
-                if message.author.guild_permissions.administrator == True or message.author.id == 333220752117596160:
-                    await message.channel.send(content="Please mention now the User i should kick")
+                if message.author.guild_permissions.administrator == True or message.author.id == DEINE_USER_ID:
+                    await message.channel.send(content="Bitte mentione den User den ich kicken soll")
 
                     def c(m):
                         if m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -536,18 +522,18 @@ class MyClient(discord.Client):
 
                     usr = await client.wait_for("message", check=c, timeout=None)
                     usertoban = usr.mentions[0]
-                    await message.channel.send(content="If I should ban " + str(
-                        usertoban.mention) + " then please send me now the reason and otherwise please send `n`")
+                    await message.channel.send(content="Ich werde den User " + str(
+                        usertoban.mention) + "kicken. Bitte sende mir nun den ban Grund oder wenn du keinen grund angeben möchtest antworte mit `n`")
                     reas = await client.wait_for("message", check=c, timeout=None)
                     if reas.content != "n":
                         try:
                             await message.author.guild.kick(usertoban,
-                                                            reason=reas.content + "  | Kicked by: " + reas.author.name)
+                                                            reason=reas.content + "  | Wurde gekickt von: " + reas.author.name)
                         except discord.errors.Forbidden:
                             await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                                           description="Error i dont have the permissions to ban"))
+                                                                           description="Error ich habe keine Rechte zum kicken!"))
                 else:
-                    sorry = await message.channel.send(content="sorry this command can only use admins")
+                    sorry = await message.channel.send(content="Sorry diesen Command können nur Admins benutzen")
                     await asyncio.sleep(20)
                     await sorry.delete()
 
@@ -557,9 +543,9 @@ class MyClient(discord.Client):
                 cur.execute("SELECT activated FROM server_logs WHERE gid=?", (gid,))
                 status = cur.fetchone()[0]
                 if status == "yes":
-                    act = "Logs are enabled on this server"
+                    act = "Logs sind aktiviert auf diesem Server"
                 else:
-                    act = "Logs are not created here "
+                    act = "Logs sind nicht aktiviert hier "
                 hel = prefix + "help"
                 change = prefix + "setupL"
                 embed = discord.Embed(color=0x64efff)
@@ -569,13 +555,13 @@ class MyClient(discord.Client):
                 embed.add_field(name="more help:", value=hel, inline=True)
                 await message.channel.send(embed=embed)
             elif invoke == "setupL":
-                if message.author.guild_permissions.administrator == True or message.author.id == 333220752117596160:
+                if message.author.guild_permissions.administrator == True or message.author.id == DEINE_USER_ID:
                     def c(m):
                         if m.author.id == message.author.id and m.channel.id == message.channel.id:
                             return m
 
                     await message.channel.send(embed=discord.Embed(color=0x64efff,
-                                                                   description="Okay first of all please mention the channel where i should send all logs to like #YourChannel"))
+                                                                   description="Okay also als erstes sende mit bitte den Channel in dem der Log geschickt werden soll also zum Beispiel #LogChannel"))
                     waitforchannel = await client.wait_for("message", check=c, timeout=None)
                     log = waitforchannel.channel_mentions[0]
                     logchannel = log.id
@@ -592,11 +578,11 @@ class MyClient(discord.Client):
                                 await webhook.send(username='Logit',
                                                    avatar_url="https://cdn.discordapp.com/app-icons/398933329862328330/e33eff5bb64f94c2d013bc9e6de01393.png",
                                                    embed=discord.Embed(color=discord.Color.green(),
-                                                                       description="It worked"))
+                                                                       description="Es funktioniert"))
 
                         except discord.errors.Forbidden:
                             await message.channel.send(
-                                content="Setup has been cancelled! Unfortunately I don't have the authorization to create a webhook (manage_webhooks), but this is urgently needed for this function.")
+                                content="Setup wurde abgebrochen! Möglicher Weise habe ich nicht alle berechtigungen dafür (WebHooks verwalten)")
                     else:
                         cur.execute("SELECT url FROM webhook WHERE server=?", (message.guild.id,))
                         url = cur.fetchone()[0]
@@ -608,16 +594,18 @@ class MyClient(discord.Client):
                                                    embed=discord.Embed(color=discord.Color.green(),
                                                                        description="Webhook existiert bereits"))
                         except discord.errors.NotFound:
-                            await message.channel.send("Please kick the bot and invite him again - thx")
+                            await message.channel.send("Bitte kicke den bot und invite ihn erneut - DANKE")
                     print(logchannel)
                     if logchannel != None:
                         gid = message.guild.id
                         auth = message.author.id
-                        embed = discord.Embed(description="to activate a function please click the number for this setting",color=0x64efff)
+                        embed = discord.Embed(
+                            description="Um die Funktion zu aktivieren reagiere bitte mit der passenden Nummer",
+                            color=0x64efff)
                         embed.set_author(name="Setup | Logs")
                         embed.add_field(name="member join", value="1", inline=False)
                         embed.add_field(name="member leave", value="2", inline=False)
-                        embed.add_field(name="member update (e.g changed Nickname...)", value="3", inline=False)
+                        embed.add_field(name="member update (e.g Nickname Änderung...)", value="3", inline=False)
                         embed.add_field(name="member ban", value="4", inline=False)
                         embed.add_field(name="member unban", value="5", inline=False)
                         embed.add_field(name="message delete", value="6", inline=False)
@@ -634,9 +622,10 @@ class MyClient(discord.Client):
                         embed.add_field(name="role create", value="17", inline=False)
                         embed.add_field(name="role delete", value="18", inline=False)
                         embed.add_field(name="role update", value="19", inline=False)
-                        embed.set_footer(text="You could click so many nummbers as you want to activate")
+                        embed.set_footer(text="Du kannst auf so viele Nummern zu klicken wie du willst")
 
-                        cur.execute("UPDATE server_logs SET owner=?, activated='yes', channelid=? WHERE gid=?",(auth, logchannel, gid))
+                        cur.execute("UPDATE server_logs SET owner=?, activated='yes', channelid=? WHERE gid=?",
+                                    (auth, logchannel, gid))
                         conn.commit()
 
                         msg = await message.channel.send(embed=embed)
@@ -661,34 +650,42 @@ class MyClient(discord.Client):
                             await msg.add_reaction(z18)
                             await msg.add_reaction(z19)
                         except discord.errors.Forbidden:
-                            await message.channel.send(embed=discord.Embed(color=discord.Color.red(),description="Error! setup is stopped! I do not have the permissions for adding reactions"))
+                            await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
+                                                                           description="Error! Setup wurde abgebrochen da ich nicht die Berrechtigung habe Reaktionen hinzuzu fügen!"))
                         except discord.errors.NotFound:
                             await message.channel.send(
-                                content="Sorry! something went wrong! I couldnt find my emojis. Please join https://discord.gg/HD7x2vx to get help from me")
+                                content="Sorry! Irgendwas ist falch gelaufen. Bitt joine https://discord.gg/HD7x2vx um Hilfe von mir zu bekommen.")
                         except discord.errors.HTTPException:
-                            await message.channel.send(embed=discord.Embed(color=discord.Color.red(),description="Error! I have a temporary issue. Please try it again or join my support server to get help https://discord.gg/HD7x2vx "))
+                            await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
+                                                                           description="Error! I habe einen unbekannten Fehler bitte probiere es erneut oder joine meinem Support Server https://discord.gg/HD7x2vx "))
                     else:
-                        await message.channel.send(embed=discord.Embed(color=discord.Color.red(),description="Error! setup is broken up! Your input wasnt okay it should look like this **386425937748819978**"))
+                        await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
+                                                                       description="Error! Setup wurde abgebrochen es muss z.B. so aus sehen: **386425937748819978**"))
                 else:
-                    sorry = await message.channel.send(embed=discord.Embed(color=discord.Color.red(), description="This command can only use administrators, sorry").set_thumbnail(url="https://thebotdev.de/assets/img/alert.png"))
+                    sorry = await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
+                                                                           description="Diesen Command können leider nur Administratoren nutzen. Sorry").set_thumbnail(
+                        url="https://thebotdev.de/assets/img/alert.png"))
                     await asyncio.sleep(20)
                     await sorry.delete()
 
             elif invoke == "send":
-                if message.author.guild_permissions.administrator == True or message.author.id == 333220752117596160:
+                if message.author.guild_permissions.administrator == True or message.author.id == DEINE_USER_ID:
                     me = (message.content).replace("send", "")
                     mes = (me).replace(str(prefix), "")
                     try:
                         await message.channel.send(content=mes)
                     except discord.errors.HTTPException:
                         await message.channel.send(embed=discord.Embed(color=0x64efff,
-                                                                       description=prefix + "send [The Message I should send]"))
+                                                                       description=prefix + "send [Die nachricht die ich senden soll]"))
                 else:
-                    sorry = await message.channel.send(embed=discord.Embed(color=discord.Color.red(),description="This command can only use administrators, sorry").set_thumbnail(url="https://thebotdev.de/assets/img/alert.png"))
+                    sorry = await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
+                                                                           description="Diesen Command können leider nur Administratoren nutzen. Sorry").set_thumbnail(
+                        url="https://thebotdev.de/assets/img/alert.png"))
                     await asyncio.sleep(20)
                     await sorry.delete()
             elif invoke == "message":
-                setup = await message.channel.send(embed=discord.Embed(color=discord.Color.magenta(), description="OK! The setup for creating a message is started. Please send now the color, which should have the border (green/red/magenta/blue/gold) and don't worry about this message and which ones will be written during setup I delete later:) "))
+                setup = await message.channel.send(embed=discord.Embed(color=discord.Color.magenta(),
+                                                                       description="OK! Das Setup um die nacheicht zu erstellen wurde gestartet. Bitte sende nun die Farbe die der Rand haben soll (grün/rot/magenta/blau/gold) und wundere dich nicht über diese Nachricht ich werde sie nach dem Setup löschen :) "))
 
                 # time.sleep(4)
 
@@ -699,9 +696,10 @@ class MyClient(discord.Client):
                 msgwaitfor = await client.wait_for("message", check=checkmsg, timeout=None)
                 if msgwaitfor != None:
 
-                    if msgwaitfor.content == "green":
-                        print("Color: Green")
-                        cg = await message.channel.send(embed=discord.Embed(color=discord.Color.green(), description="You have chosen the color green. As an example of what the message looks like later, this message has already colored the border. So now please send me the text, which your message should have"))
+                    if msgwaitfor.content == "grün":
+                        print("Farbe: Grün")
+                        cg = await message.channel.send(embed=discord.Embed(color=discord.Color.green(),
+                                                                            description="Du hast die farbe grün gewählt. Als Beispiel wie die nachricht später aussehen wird habe ich den Rand dieser Nacheicht auch grün gefärbt. Also sende mit bitte jetzt den text der in der Nachricht stehen soll."))
 
                         def checkg(m):
                             if message.content != None and m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -716,11 +714,14 @@ class MyClient(discord.Client):
                             await msgwaitfor.delete()
                             await cg.delete()
                         except:
-                            await message.channel.send(embed=discord.Embed(color=discord.Color.red(), description="Oh it looks like that i have to correct myself. I said i am going to delete all messages, but it seems to be that i do not have the permissions to delete messages (manage messages)").set_thumbnail(url="https://thebotdev.de/assets/img/alert.png"))
+                            await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
+                                                                           description="Oh es sieht so aus als müsste ich mich selbs korrigieren. Ich habe gesagt das ich alle nachrichten des Setup's löschen werde aber wie es aussieht habe ich nicht die Permission's dazu die Permission heisst (Nachrichten verwalten)").set_thumbnail(
+                                url="https://thebotdev.de/assets/img/alert.png"))
 
-                    elif msgwaitfor.content == "red":
-                        print("Color: Red")
-                        cg = await message.channel.send(embed=discord.Embed(color=discord.Color.red(),description="You have chosen the color red. As an example of what the message looks like later, this message has already colored the border. So now please send me the text, which your message should have"))
+                    elif msgwaitfor.content == "rot":
+                        print("Color: Rot")
+                        cg = await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
+                                                                            description="Du hast die farbe rot gewählt. Als Beispiel wie die nachricht später aussehen wird habe ich den Rand dieser Nacheicht auch rot gefärbt. Also sende mit bitte jetzt den text der in der Nachricht stehen soll."))
 
                         def checkr(m):
                             if message.content != None and m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -735,15 +736,17 @@ class MyClient(discord.Client):
                             await msgwaitfor.delete()
                             await cg.delete()
                         except:
-                            await message.channel.send(embed=discord.Embed(color=discord.Color.red(), description="Oh it looks like that i have to correct myself. I said i am going to delete all messages, but it seems to be that i do not have the permissions to delete messages (manage messages)").set_thumbnail(url="https://thebotdev.de/assets/img/alert.png"))
+                            await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
+                                                                           description="Oh es sieht so aus als müsste ich mich selbs korrigieren. Ich habe gesagt das ich alle nachrichten des Setup's löschen werde aber wie es aussieht habe ich nicht die Permission's dazu die Permission heisst (Nachrichten verwalten)").set_thumbnail(
+                                url="https://thebotdev.de/assets/img/alert.png"))
 
 
 
 
-                    elif msgwaitfor.content == "blue":
-                        print("Color: Blue")
+                    elif msgwaitfor.content == "blau":
+                        print("Color: Blau")
                         cg = await message.channel.send(embed=discord.Embed(color=discord.Color.blue(),
-                                                                            description="You have chosen the color blue. As an example of what the message looks like later, this message has already colored the border. So now please send me the text, which your message should have"))
+                                                                            description="Du hast die farbe blau gewählt. Als Beispiel wie die nachricht später aussehen wird habe ich den Rand dieser Nacheicht auch blau gefärbt. Also sende mit bitte jetzt den text der in der Nachricht stehen soll."))
 
                         def checkb(m):
                             if message.content != None and m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -759,7 +762,7 @@ class MyClient(discord.Client):
                             await cg.delete()
                         except:
                             await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                                           description="Oh it looks like that i have to correct myself. I said i am going to delete all messages, but it seems to be that i do not have the permissions to delete messages (manage messages)").set_thumbnail(
+                                                                           description="Oh es sieht so aus als müsste ich mich selbs korrigieren. Ich habe gesagt das ich alle nachrichten des Setup's löschen werde aber wie es aussieht habe ich nicht die Permission's dazu die Permission heisst (Nachrichten verwalten)").set_thumbnail(
                                 url="https://thebotdev.de/assets/img/alert.png"))
 
 
@@ -767,7 +770,7 @@ class MyClient(discord.Client):
                     elif msgwaitfor.content == "magenta":
                         print("Color: Magenta")
                         cg = await message.channel.send(embed=discord.Embed(color=discord.Color.magenta(),
-                                                                            description="You have chosen the color magenta. As an example of what the message looks like later, this message has already colored the border. So now please send me the text, which your message should have"))
+                                                                            description="Du hast die farbe magenta gewählt. Als Beispiel wie die nachricht später aussehen wird habe ich den Rand dieser Nacheicht auch magenta gefärbt. Also sende mit bitte jetzt den text der in der Nachricht stehen soll."))
 
                         def checkm(m):
                             if message.content != None and m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -783,14 +786,14 @@ class MyClient(discord.Client):
                             await cg.delete()
                         except:
                             await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                                           description="Oh it looks like that i have to correct myself. I said i am going to delete all messages, but it seems to be that i do not have the permissions to delete messages (manage messages)").set_thumbnail(
+                                                                           description="Oh es sieht so aus als müsste ich mich selbs korrigieren. Ich habe gesagt das ich alle nachrichten des Setup's löschen werde aber wie es aussieht habe ich nicht die Permission's dazu die Permission heisst (Nachrichten verwalten)").set_thumbnail(
                                 url="https://thebotdev.de/assets/img/alert.png"))
 
 
                     elif msgwaitfor.content == "gold":
                         print("Color: Gold")
                         cg = await message.channel.send(embed=discord.Embed(color=discord.Color.gold(),
-                                                                            description="You have chosen the color gold - ok its more yellow, but its called gold. As an example of what the message looks like later, this message has already colored the border. So now please send me the text, which your message should have"))
+                                                                            description="Du hast die farbe gold gewählt. Als Beispiel wie die nachricht später aussehen wird habe ich den Rand dieser Nacheicht auch gold gefärbt. Also sende mit bitte jetzt den text der in der Nachricht stehen soll."))
 
                         def checkgold(m):
                             if message.content != None and m.author.id == message.author.id and m.channel.id == message.channel.id:
@@ -806,7 +809,7 @@ class MyClient(discord.Client):
                             await cg.delete()
                         except:
                             await message.channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                                           description="Oh it looks like that i have to correct myself. I said i am going to delete all messages, but it seems to be that i do not have the permissions to delete messages (manage messages)").set_thumbnail(
+                                                                           description="Oh es sieht so aus als müsste ich mich selbs korrigieren. Ich habe gesagt das ich alle nachrichten des Setup's löschen werde aber wie es aussieht habe ich nicht die Permission's dazu die Permission heisst (Nachrichten verwalten)").set_thumbnail(
                                 url="https://thebotdev.de/assets/img/alert.png"))
 
                     else:
@@ -815,7 +818,7 @@ class MyClient(discord.Client):
             for mentionsn in message.mentions:
                 if mentionsn == client.user:
                     await message.channel.send(
-                        content="Oh Hello! Here are my most useful commands " + prefix + "help and " + prefix + "info\n Thanks for using!")
+                        content="Oh hallo! Hier sind die meist benutzten Commands: " + prefix + "help und " + prefix + "info\n Danke für die Benutzung!")
 
     async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
         gu = client.get_channel(channel_id)
@@ -845,7 +848,7 @@ class MyClient(discord.Client):
                     Usersmoney = cur.fetchall()
                     if str(Usersmoney) == "[]":
                         msg = await gu.send(
-                            content="I'm sorry, but you can't play the game yet because you don't have an account. To create one simply type %sacc to create one and get 2500" % (
+                            content="Sorry aber du kannst keine Games spielen da du keinen Account hast. Um einen Account zu erstellen mache %sacc und erhalte 2500 Gratis!" % (
                                 prefix) + str(moneyicon))
                         await asyncio.sleep(60)
                         await msg.delete()
@@ -859,28 +862,28 @@ class MyClient(discord.Client):
                                         (newmoney, user_id, gid))
                             conn.commit()
                             await gu.send(
-                                content="So I have now thought a number which is between 1 and 10, now please send me the number where you think I thought it was (only the number e. g. `5`)")
+                                content="Nun wähle bitte eine Nummer zwischen 1 und 10, und nun sende mit die Zahl.")
                             gedacht = await client.wait_for("message", check=c, timeout=None)
                             botsgedacht = random.randint(1, 10)
                             if botsgedacht == int(gedacht.content):
-                                await gu.send(content="Wow that was right! My number was " + str(botsgedacht))
+                                await gu.send(content="Oh das ist richtig meine Nummer war " + str(botsgedacht))
                                 newmoney = money + 100
                                 cur.execute("UPDATE server_game_accounts SET money=? WHERE userid=? AND serverid=?",
                                             (newmoney, user_id, gid))
                                 conn.commit()
                             else:
                                 await gu.send(
-                                    content="Iam sorry that was not what i thought my number was " + str(botsgedacht))
+                                    content="Sorry das war leider nicht die Zahl die ich mir gedacht habe meine war " + str(botsgedacht))
                         else:
                             await gu.send(
-                                content="Oh, you can't play this games any more because you have not enough money;( Your money: " + str(
+                                content="Oh, du kannst dieses Game nicht spielen da du nicht genug Geld hast;( Dein Geld: " + str(
                                     money))
                 elif emoji.id == n2.id:
                     cur.execute("SELECT money FROM server_game_accounts WHERE userid=? AND serverid=?", (user_id, gid))
                     Usersmoney = cur.fetchall()
                     if str(Usersmoney) == "[]":
                         msg = await gu.send(
-                            content="I'm sorry, but you can't play the game yet because you don't have an account. To create one simply type %sacc to create one and get 2500" % (
+                            content="Sorry aber du kannst keine Games spielen da du keinen Account hast. Um einen Account zu erstellen mache %sacc und erhalte 2500 Gratis!" % (
                                 prefix) + str(moneyicon))
                         await asyncio.sleep(60)
                         await msg.delete()
@@ -894,21 +897,21 @@ class MyClient(discord.Client):
                                         (newmoney, user_id, gid))
                             conn.commit()
                             await gu.send(
-                                content="So I have now thought a number which is between 1 and 20, now please send me the number where you think I thought it was (only the number e. g. `5`)")
+                                content="So ich habe mir nun eine Nummer zwischen 1 und 20 gedacht, nun sende mir bitte eine Nummer zwischen 1 und 20.")
                             gedacht = await client.wait_for("message", check=c, timeout=None)
                             botsgedacht = random.randint(1, 20)
                             if botsgedacht == int(gedacht.content):
-                                await gu.send(content="Wow that was right! My number was " + str(botsgedacht))
+                                await gu.send(content="Wow das ist richtig! My Nummer war " + str(botsgedacht))
                                 newmoney = money + 200
                                 cur.execute("UPDATE server_game_accounts SET money=? WHERE userid=? AND serverid=?",
                                             (newmoney, user_id, gid))
                                 conn.commit()
                             else:
                                 await gu.send(
-                                    content="Iam sorry that was not what i thought my number was " + str(botsgedacht))
+                                    content="Sorry das war leider nicht die Zahl die ich mir gedacht habe meine war " + str(botsgedacht))
                         else:
                             await gu.send(
-                                content="Oh, you can't play this games any more because you have not enough money;( Your money: " + str(
+                                content="Oh, du kannst dieses Game nicht spielen da du nicht genug Geld hast;( Dein Geld: " + str(
                                     money))
 
                 elif emoji.id == n3.id:
@@ -916,7 +919,7 @@ class MyClient(discord.Client):
                     Usersmoney = cur.fetchall()
                     if str(Usersmoney) == "[]":
                         msg = await gu.send(
-                            content="I'm sorry, but you can't play the game yet because you don't have an account. To create one simply type %sacc to create one and get 2500" % (
+                            content="Sorry aber du kannst keine Games spielen da du keinen Account hast. Um einen Account zu erstellen mache %sacc und erhalte 2500 Gratis!" % (
                                 prefix) + str(moneyicon))
                         await asyncio.sleep(60)
                         await msg.delete()
@@ -930,21 +933,21 @@ class MyClient(discord.Client):
                                         (newmoney, user_id, gid))
                             conn.commit()
                             await gu.send(
-                                content="So I have now thought a number which is between 1 and 30, now please send me the number where you think I thought it was (only the number e. g. `5`)")
+                                content="So ich habe mir nun eine Nummer zwischen 1 und 30 gedacht, nun sende mir bitte eine Nummer zwischen 1 und 30.")
                             gedacht = await client.wait_for("message", check=c, timeout=None)
                             botsgedacht = random.randint(1, 30)
                             if botsgedacht == int(gedacht.content):
-                                await gu.send(content="Wow that was right! My number was " + str(botsgedacht))
+                                await gu.send(content="Wow das ist richtig! Meine Nummer war " + str(botsgedacht))
                                 newmoney = money + 3000
                                 cur.execute("UPDATE server_game_accounts SET money=? WHERE userid=? AND serverid=?",
                                             (newmoney, user_id, gid))
                                 conn.commit()
                             else:
                                 await gu.send(
-                                    content="Iam sorry that was not what i thought my number was " + str(botsgedacht))
+                                    content="Sorry aber das war nicht die Nummer die ich mir gedacht habe meine Nummer war " + str(botsgedacht))
                         else:
                             await gu.send(
-                                content="Oh, you can't play this games any more because you have not enough money;( Your money: " + str(
+                                content="Oh, du kannst dieses Game nicht spielen da du nicht genug Geld hast;( Dein Geld: " + str(
                                     money))
 
                 elif emoji.id == n4.id:
@@ -952,7 +955,7 @@ class MyClient(discord.Client):
                     Usersmoney = cur.fetchall()
                     if str(Usersmoney) == "[]":
                         msg = await gu.send(
-                            content="I'm sorry, but you can't play the game yet because you don't have an account. To create one simply type %sacc to create one and get 2500" % (
+                            content="Oh, du kannst dieses Game nicht spielen da du nicht genug Geld hast;( Dein Geld: " + str(
                                 prefix) + str(moneyicon))
                         await asyncio.sleep(60)
                         await msg.delete()
@@ -966,21 +969,21 @@ class MyClient(discord.Client):
                                         (newmoney, user_id, gid))
                             conn.commit()
                             await gu.send(
-                                content="So I have now thought a number which is between 1 and 40, now please send me the number where you think I thought it was (only the number e. g. `5`)")
+                                content="So ich habe mir nun eine Nummer zwischen 1 und 40 gedacht, nun sende mir bitte eine Nummer zwischen 1 und 40.")
                             gedacht = await client.wait_for("message", check=c, timeout=None)
                             botsgedacht = random.randint(1, 40)
                             if botsgedacht == int(gedacht.content):
-                                await gu.send(content="Wow that was right! My number was " + str(botsgedacht))
+                                await gu.send(content="Wow das ist richtig! Meine Nummer war " + str(botsgedacht))
                                 newmoney = money + 40000
                                 cur.execute("UPDATE server_game_accounts SET money=? WHERE userid=? AND serverid=?",
                                             (newmoney, user_id, gid))
                                 conn.commit()
                             else:
                                 await gu.send(
-                                    content="Iam sorry that was not what i thought my number was " + str(botsgedacht))
+                                    content="Sorry das ist nicht die Nummer die ich mir gedacht habe. ich habe mir die Zahl " + str(botsgedacht) + " gedacht")
                         else:
                             await gu.send(
-                                content="Oh, you can't play this games any more because you have not enough money;( Your money: " + str(
+                                content="Oh, du kannst dieses Game nicht spielen da du nicht genug Geld hast;( Dein Geld: " + str(
                                     money))
 
                 elif emoji.id == n5.id:
@@ -988,7 +991,7 @@ class MyClient(discord.Client):
                     Usersmoney = cur.fetchall()
                     if str(Usersmoney) == "[]":
                         msg = await gu.send(
-                            content="I'm sorry, but you can't play the game yet because you don't have an account. To create one simply type %sacc to create one and get 2500" % (
+                            content="Sorry aber du kannst keine Games spielen da du keinen Account hast. Um einen Account zu erstellen mache %sacc und erhalte 2500 Gratis!" % (
                                 prefix) + str(moneyicon))
                         await asyncio.sleep(60)
                         await msg.delete()
@@ -1002,21 +1005,21 @@ class MyClient(discord.Client):
                                         (newmoney, user_id, gid))
                             conn.commit()
                             await gu.send(
-                                content="So I have now thought a number which is between 1 and 50, now please send me the number where you think I thought it was (only the number e. g. `5`)")
+                                content="So ich habe mir nun eine Nummer zwischen 1 und 50 gedacht, nun sende mir bitte eine Nummer zwischen 1 und 50.")
                             gedacht = await client.wait_for("message", check=c, timeout=None)
                             botsgedacht = random.randint(1, 50)
                             if botsgedacht == int(gedacht.content):
-                                await gu.send(content="Wow that was right! My number was " + str(botsgedacht))
+                                await gu.send(content="Wow das ist richtig! Meine Nummer war " + str(botsgedacht))
                                 newmoney = money + 5555
                                 cur.execute("UPDATE server_game_accounts SET money=? WHERE userid=? AND serverid=?",
                                             (newmoney, user_id, gid))
                                 conn.commit()
                             else:
                                 await gu.send(
-                                    content="Iam sorry that was not what i thought my number was " + str(botsgedacht))
+                                    content="Sorry das ist nicht die Nummer die ich mir gedacht habe. ich habe mir die Zahl " + str(botsgedacht) + " gedacht")
                         else:
                             await gu.send(
-                                content="Oh, you can't play this games any more because you have not enough money;( Your money: " + str(
+                                content="Oh, du kannst dieses Game nicht spielen da du nicht genug Geld hast;( Dein Geld: " + str(
                                     money))
         if owner == user_id:
             if emoji.id == z1.id:
@@ -1085,8 +1088,8 @@ class MyClient(discord.Client):
                     cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
                     ch = cur.fetchone()[0]
                     channel = client.get_channel(ch)
-                    await channel.send(embed=discord.Embed(color=discord.Color.green(), description="The User " + str(
-                        usr.mention) + " reacted with " + str(emoji)).set_author(name=usr.name + " had reacted",
+                    await channel.send(embed=discord.Embed(color=discord.Color.green(), description="Der User " + str(
+                        usr.mention) + " reagierte mit " + str(emoji)).set_author(name=usr.name + " hat reagiert",
                                                                                  icon_url=usr.avatar_url))
 
         else:
@@ -1094,13 +1097,13 @@ class MyClient(discord.Client):
             data = cur.fetchone()[0]
             if data == 0 or data == None:
                 pass
-            if data == 1:
-                cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
-                ch = cur.fetchone()[0]
-                channel = client.get_channel(ch)
-                await channel.send(embed=discord.Embed(color=discord.Color.green(), description="The User " + str(
-                    usr.mention) + " reacted with " + str(emoji)).set_author(name=usr.name + " had reacted",
-                                                                             icon_url=usr.avatar_url))
+                if data == 1:
+                    cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
+                    ch = cur.fetchone()[0]
+                    channel = client.get_channel(ch)
+                    await channel.send(embed=discord.Embed(color=discord.Color.green(), description="Der User " + str(
+                        usr.mention) + " reagierte mit " + str(emoji)).set_author(name=usr.name + " hat reagiert",
+                                                                                 icon_url=usr.avatar_url))
 
     async def on_raw_reaction_remove(self, emoji, message_id, channel_id, user_id):
         gu = client.get_channel(channel_id)
@@ -1110,8 +1113,6 @@ class MyClient(discord.Client):
         gid = gugui.id
         cur.execute("SELECT owner FROM server_logs WHERE gid=?", (gid,))
         owner = cur.fetchone()[0]
-        # cur.execute("SELECT channelid FROM server_logs WHERE gid=?")
-        # chann = cur.fetchone()[0]	
         if owner == user_id:
             if emoji.id == z1.id:
                 cur.execute("UPDATE server_logs SET a1=0 WHERE gid=?", (gid,))
@@ -1179,22 +1180,22 @@ class MyClient(discord.Client):
                     cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
                     ch = cur.fetchone()[0]
                     channel = client.get_channel(ch)
-                    await channel.send(embed=discord.Embed(color=discord.Color.green(), description="The User " + str(
-                        usr.mention) + " removed his reaction: " + str(emoji)).set_author(
-                        name=usr.name + " had reacted", icon_url=usr.avatar_url))
+                    await channel.send(embed=discord.Embed(color=discord.Color.green(), description="Der User " + str(
+                        usr.mention) + " entfernte die Reaktion " + str(emoji)).set_author(name=usr.name + " hat reagiert",
+                                                                                 icon_url=usr.avatar_url))
 
         else:
             cur.execute("SELECT a15 FROM server_logs WHERE gid=?", (gid,))
             data = cur.fetchone()[0]
             if data == 0 or data == None:
                 pass
-            if data == 1:
-                cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
-                ch = cur.fetchone()[0]
-                channel = client.get_channel(ch)
-                await channel.send(embed=discord.Embed(color=discord.Color.green(), description="The User " + str(
-                    usr.mention) + " removed his reaction: " + str(emoji)).set_author(name=usr.name + " had reacted",
-                                                                                      icon_url=usr.avatar_url))
+                if data == 1:
+                    cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
+                    ch = cur.fetchone()[0]
+                    channel = client.get_channel(ch)
+                    await channel.send(embed=discord.Embed(color=discord.Color.green(), description="Der User " + str(
+                        usr.mention) + " entfernte die Reaktion " + str(emoji)).set_author(name=usr.name + " hat reagiert",
+                                                                                 icon_url=usr.avatar_url))
 
     async def on_raw_reaction_clear(self, message_id, channel_id):
         chan = client.get_channel(channel_id)
@@ -1208,8 +1209,8 @@ class MyClient(discord.Client):
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
             await channel.send(embed=discord.Embed(color=discord.Color.blue(),
-                                                   description="Reactions from a message in the channel " + str(
-                                                       chan.mention) + "has been cleared").set_author(
+                                                   description="Reaktionen einer Nachricht im Channel " + str(
+                                                       chan.mention) + "wurden gelöscht").set_author(
                 name=chan.guild.name, icon=chan.guild.icon_url))
 
     async def on_member_join(self, member):
@@ -1223,19 +1224,13 @@ class MyClient(discord.Client):
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
             usr = client.get_user(member.id)
-            # hype = usr.profile.hypesquad
-            # if hype==False:
-            #	shype = hype
 
-            embed = discord.Embed(title="User joined the server", color=0x00ff00)
+            embed = discord.Embed(title="User jointe dem Server", color=0x00ff00)
             embed.set_thumbnail(url=member.avatar_url)
             embed.add_field(name="Username:", value=member.name, inline=True)
             embed.add_field(name="Discriminator:", value=member.discriminator, inline=True)
             embed.add_field(name="User ID:", value=member.id, inline=True)
-            embed.add_field(name="created at:", value=member.created_at, inline=True)
-            # embed.add_field(name="hypesquad:", value=shype, inline=True)
-            # embed.add_field(name="nitro:", value="no", inline=True)
-            # embed.add_field(name="discord partner:", value="niemals", inline=True)
+            embed.add_field(name="Erstellt am:", value=member.created_at, inline=True)
             await channel.send(embed=embed)
 
     async def on_member_remove(self, member):
@@ -1249,19 +1244,13 @@ class MyClient(discord.Client):
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
             usr = client.get_user(member.id)
-            # hype = usr.profile.hypesquad
-            # if hype==False:
-            #	shype = hype
 
-            embed = discord.Embed(title="User leaved the server", color=discord.Color.red())
+            embed = discord.Embed(title="User hat den Server verlassen", color=discord.Color.red())
             embed.set_thumbnail(url=member.avatar_url)
             embed.add_field(name="Username:", value=member.name, inline=True)
             embed.add_field(name="Discriminator:", value=member.discriminator, inline=True)
             embed.add_field(name="User ID:", value=member.id, inline=True)
-            embed.add_field(name="created at:", value=member.created_at, inline=True)
-            # embed.add_field(name="hypesquad:", value=shype, inline=True)
-            # embed.add_field(name="nitro:", value="no", inline=True)
-            # embed.add_field(name="discord partner:", value="niemals", inline=True)
+            embed.add_field(name="Erstellt am:", value=member.created_at, inline=True)
             await channel.send(embed=embed)
 
     async def on_member_update(self, before, after):
@@ -1276,28 +1265,28 @@ class MyClient(discord.Client):
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
             if before.nick != after.nick:
-                await channel.send(embed=discord.Embed(color=0x64efff, description="The User " + str(
-                    before.name) + " changed his nick from " + str(before.nick) + " to " + str(after.nick)).set_author(
+                await channel.send(embed=discord.Embed(color=0x64efff, description="Der User " + str(
+                    before.name) + " änderte seinen Nickname von " + str(before.nick) + " zu " + str(after.nick)).set_author(
                     name=before.name, icon_url=before.avatar_url))
             elif before.status != after.status:
-                await channel.send(embed=discord.Embed(color=0x64efff, description="The User " + str(
-                    before.name) + " changed his status from " + str(before.status) + " to " + str(
+                await channel.send(embed=discord.Embed(color=0x64efff, description="Der User " + str(
+                    before.name) + " änderte seinen Status von " + str(before.status) + " zu " + str(
                     after.status)).set_author(name=before.name, icon_url=before.avatar_url))
             elif before.game != after.game:
-                await channel.send(embed=discord.Embed(color=0x64efff, description="The User " + str(
-                    before.name) + " changed his game from " + str(before.game) + " to " + str(after.game)).set_author(
+                await channel.send(embed=discord.Embed(color=0x64efff, description="Der User " + str(
+                    before.name) + " änderte sein Game von " + str(before.game) + " zu " + str(after.game)).set_author(
                     name=before.name, icon_url=before.avatar_url))
             elif before.avatar_url != after.avatar_url:
-                await channel.send(embed=discord.Embed(color=0x64efff, description="The User " + str(
-                    before.name) + " changed his avatar to ->").set_thumbnail(url=after.avatar_url))
+                await channel.send(embed=discord.Embed(color=0x64efff, description="Der User " + str(
+                    before.name) + " änderte seinen Avatar zu ->").set_thumbnail(url=after.avatar_url))
 
             elif before.roles != after.roles:
                 if len(before.roles) < len(after.roles):
-                    await channel.send(embed=discord.Embed(color=0x64efff, description="The User " + str(
-                        before.name) + " was added a role").set_author(name=before.name, icon_url=before.avatar_url))
+                    await channel.send(embed=discord.Embed(color=0x64efff, description="Der User " + str(
+                        before.name) + " wurde folgende Rolle geaddet").set_author(name=before.name, icon_url=before.avatar_url))
                 elif len(before.roles) > len(after.roles):
-                    await channel.send(embed=discord.Embed(color=0x64efff, description="The User " + str(
-                        before.name) + " was deleted from a role").set_author(name=before.name,
+                    await channel.send(embed=discord.Embed(color=0x64efff, description="Der User " + str(
+                        before.name) + " wurde folgende Rolle entfernt").set_author(name=before.name,
                                                                               icon_url=before.avatar_url))
 
     async def on_member_ban(self, guild, user):
@@ -1310,8 +1299,8 @@ class MyClient(discord.Client):
             cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
-            await channel.send(embed=discord.Embed(color=discord.Color.red(), description="The User " + str(
-                user.name) + " was banned from the server ").set_author(name=user.name, icon_url=user.avatar_url))
+            await channel.send(embed=discord.Embed(color=discord.Color.red(), description="Der User " + str(
+                user.name) + " wurde gebannt vom Server ").set_author(name=user.name, icon_url=user.avatar_url))
 
     async def on_member_unban(self, guild, user):
         gid = guild.id
@@ -1323,8 +1312,8 @@ class MyClient(discord.Client):
             cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
-            await channel.send(embed=discord.Embed(color=discord.Color.green(), description="The User " + str(
-                user.name) + " was unbanned from the server ").set_author(name=user.name, icon_url=user.avatar_url))
+            await channel.send(embed=discord.Embed(color=discord.Color.green(), description="Der User " + str(
+                user.name) + " wurde vom Server entbannt ").set_author(name=user.name, icon_url=user.avatar_url))
 
     async def on_raw_message_delete(self, message_id, channel_id):
         channelmessage = client.get_channel(channel_id)
@@ -1341,9 +1330,8 @@ class MyClient(discord.Client):
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
             print(message_id)
-            # await discord.abc.Messageable.get_message(, id=message_id)
-            await channel.send(embed=discord.Embed(color=discord.Color.red(), description="Message in channel " + str(
-                channelmessage.mention) + " was deleted.").set_author(name=guild.name + "| Log Deleted Message",
+            await channel.send(embed=discord.Embed(color=discord.Color.red(), description="Message im Channel " + str(
+                channelmessage.mention) + " wurde gelöscht.").set_author(name=guild.name + "| Log gelöschte Nachricht",
                                                                       icon_url=guild.icon_url))
 
     async def on_raw_bulk_message_delete(self, message_ids, channel_id):
@@ -1360,11 +1348,10 @@ class MyClient(discord.Client):
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
             print(message_id)
-            # await discord.abc.Messageable.get_message(, id=message_id)
             await channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                   description=anzahl + "x Messages in the channel " + str(
-                                                       channel.mention) + " was deleted.").set_author(
-                name=guild.name + "| Log Deleted Message", icon_url=guild.icon_url))
+                                                   description=anzahl + "x Nachrichten im Channel " + str(
+                                                       channel.mention) + " wurden gelöscht.").set_author(
+                name=guild.name + "| Log gelöschte Nachrichten", icon_url=guild.icon_url))
 
     async def on_message_edit(self, before, after):
         gid = before.author.guild.id
@@ -1378,8 +1365,8 @@ class MyClient(discord.Client):
                 ch = cur.fetchone()[0]
                 channel = client.get_channel(ch)
                 if before.content != "":
-                    await channel.send(embed=discord.Embed(color=0x64efff, description="The message:\n`" + str(
-                        before.content) + "`\n was changed to:\n`" + str(after.content) + "`").set_author(
+                    await channel.send(embed=discord.Embed(color=0x64efff, description="Die Nachricht:\n`" + str(
+                        before.content) + "`\n wurde geändert zu:\n`" + str(after.content) + "`").set_author(
                         name=before.author, icon_url=before.author.avatar_url))
                 else:
                     pass
@@ -1394,8 +1381,8 @@ class MyClient(discord.Client):
             cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
-            await channel.send(embed=discord.Embed(color=0x64efff, description="The channel " + str(
-                neuerchannel.mention) + " was created"))
+            await channel.send(embed=discord.Embed(color=0x64efff, description="Der Channel " + str(
+                neuerchannel.mention) + " wurde erstellt"))
 
     async def on_guild_channel_delete(self, neuerchannel):
         gid = neuerchannel.guild.id
@@ -1407,8 +1394,8 @@ class MyClient(discord.Client):
             cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
-            await channel.send(embed=discord.Embed(color=0x64efff, description="The channel " + str(
-                neuerchannel.name) + " has been deleted"))
+            await channel.send(embed=discord.Embed(color=0x64efff, description="Der Channel " + str(
+                neuerchannel.name) + " wurde gelöscht"))
 
     async def on_guild_channel_update(self, before, after):
         gid = before.guild.id
@@ -1421,14 +1408,14 @@ class MyClient(discord.Client):
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
             if before.name != after.name:
-                await channel.send(embed=discord.Embed(color=0x64efff, description="The channel's name from " + str(
-                    after.mention) + " has been changed from `" + str(before.name) + "` to `" + str(after.name) + "`"))
+                await channel.send(embed=discord.Embed(color=0x64efff, description="Der Channel Name wurde von " + str(
+                    after.mention) + " geändert von `" + str(before.name) + "` zu `" + str(after.name) + "`"))
             elif before.topic != after.topic:
-                await channel.send(embed=discord.Embed(color=0x64efff, description="The topic from the channel " + str(
-                    after.mention) + " has been changed to:\n `" + str(after.topic) + "`"))
+                await channel.send(embed=discord.Embed(color=0x64efff, description="Der Topic vom Channel " + str(
+                    after.mention) + " wurde geändert zu:\n `" + str(after.topic) + "`"))
             else:
-                await channel.send(embed=discord.Embed(color=0x64efff, description="The channel " + str(
-                    after.mention) + " has been updated"))
+                await channel.send(embed=discord.Embed(color=0x64efff, description="Der Channel " + str(
+                    after.mention) + " wurde geupdatet."))
 
     async def on_voice_state_update(self, member, before, after):
         memberid = member.id
@@ -1449,12 +1436,12 @@ class MyClient(discord.Client):
             elif after.channel != None:
                 counterafter = counterafter + 1
             if counterbefore < counterafter:
-                await channel.send(embed=discord.Embed(color=0x64efff, description="-> The User " + str(
-                    member.name) + " jointed " + str(after.channel.name)).set_author(name=member.name,
+                await channel.send(embed=discord.Embed(color=0x64efff, description="-> Der User " + str(
+                    member.name) + " jointe " + str(after.channel.name)).set_author(name=member.name,
                                                                                      icon_url=member.avatar_url))
             elif counterbefore > counterafter + 1000000:
                 await channel.send(embed=discord.Embed(color=0x64efff,
-                                                       description="-> The User " + str(memb.name) + " leaved " + str(
+                                                       description="-> Der User " + str(memb.name) + " leavte " + str(
                                                            after.channel.name)).set_author(name=memb.name,
                                                                                            icon_url=memb.avatar_url))
 
@@ -1470,11 +1457,11 @@ class MyClient(discord.Client):
             channel = client.get_channel(ch)
             if len(before) < len(after):
                 await channel.send(embed=discord.Embed(color=discord.Color.green(),
-                                                       description="-> An Emoji as added to this server ").set_author(
+                                                       description="-> Ein Emoji wurde zum Server geaddet ").set_author(
                     name=guild.name, icon_url=guild.icon_url))
             elif len(before) > len(after):
                 await channel.send(embed=discord.Embed(color=discord.Color.red(),
-                                                       description="<- An Emoji as deleted from this server ").set_author(
+                                                       description="<- Ein Emoji wurde vom Server gelöscht ").set_author(
                     name=guild.name, icon_url=guild.icon_url))
 
     async def on_guild_role_create(self, role):
@@ -1487,8 +1474,8 @@ class MyClient(discord.Client):
             cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
-            await channel.send(embed=discord.Embed(color=discord.Color.green(), description="The Role `" + str(
-                role.name) + "` was created").set_author(name=role.guild.name, icon_url=role.guild.icon_url))
+            await channel.send(embed=discord.Embed(color=discord.Color.green(), description="Die Rolle `" + str(
+                role.name) + "` wurde erstellt").set_author(name=role.guild.name, icon_url=role.guild.icon_url))
 
     async def on_guild_role_delete(self, role):
         gid = role.guild.id
@@ -1500,8 +1487,8 @@ class MyClient(discord.Client):
             cur.execute("SELECT channelid FROM server_logs WHERE gid=?", (gid,))
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
-            await channel.send(embed=discord.Embed(color=discord.Color.green(), description="The Role `" + str(
-                role.name) + "` was deleted").set_author(name=role.guild.name, icon_url=role.guild.icon_url))
+            await channel.send(embed=discord.Embed(color=discord.Color.green(), description="Die Rolle `" + str(
+                role.name) + "` wurde gelöscht").set_author(name=role.guild.name, icon_url=role.guild.icon_url))
 
     async def on_guild_role_update(self, before, after):
         gid = after.guild.id
@@ -1514,12 +1501,12 @@ class MyClient(discord.Client):
             ch = cur.fetchone()[0]
             channel = client.get_channel(ch)
             if before.name == after.name:
-                await channel.send(embed=discord.Embed(color=discord.Color.green(), description="The Role `" + str(
-                    after.name) + "` was updated").set_author(name=after.guild.name, icon_url=after.guild.icon_url))
+                await channel.send(embed=discord.Embed(color=discord.Color.green(), description="Die Rolle `" + str(
+                    after.name) + "` wurde geupdatet").set_author(name=after.guild.name, icon_url=after.guild.icon_url))
             elif before.name != after.name:
                 await channel.send(embed=discord.Embed(color=discord.Color.green(),
-                                                       description="The Roles name was changed from `" + str(
-                                                           before.name) + "` to `" + str(after.name) + "`").set_author(
+                                                       description="Der Rollen Name wurde geändert von `" + str(
+                                                           before.name) + "` zu `" + str(after.name) + "`").set_author(
                     name=after.guild.name, icon_url=after.guild.icon_url))
 
     async def on_guild_join(self, guild):
